@@ -1,0 +1,50 @@
+import hashlib
+candidates = ["Rahul", "Ram", "Raju"]
+votes = []
+def cast_vote(candidate):
+    if candidate in candidates:
+        encrypted_vote = hashlib.sha256(candidate.encode()).hexdigest()
+        votes.append(encrypted_vote)
+    else:
+        print("Invalid candidate selected. Please try again.")
+def tally_votes():
+    vote_counts = {candidate: 0 for candidate in candidates}
+    for vote in votes:
+        for candidate in candidates:
+            if vote == hashlib.sha256(candidate.encode()).hexdigest():
+                vote_counts[candidate] += 1
+    return vote_counts
+def determine_winner(vote_counts):
+    max_votes = max(vote_counts.values())
+    winners = [candidate for candidate, count in vote_counts.items() if count == max_votes]
+    if len(winners) == 1:
+        return winners[0]
+    else:
+        return winners
+def get_num_voters():
+    while True:
+        try:
+            num_voters = int(input("Enter the number of voters: "))
+            if num_voters < 1:
+                print("Number of voters should be at least 1. Please try again.")
+            else:
+                return num_voters
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+print("Welcome to the voting system!")
+num_voters = get_num_voters()
+for i in range(num_voters):
+    print("\nVoter", i + 1)
+    print("Candidates:", candidates)
+    selected_candidate = input("Please cast your vote by typing the candidate's name: ")
+    cast_vote(selected_candidate)
+results = tally_votes()
+print("\nElection Results:")
+for candidate, count in results.items():
+    print(f"{candidate}: {count} vote(s)")
+winner = determine_winner(results)
+if isinstance(winner, list):
+    print("\nIt's a tie between:", " and ".join(winner))
+else:
+    print(f"\nThe winner is: {winner}")
+print("\nThank you for voting!")
